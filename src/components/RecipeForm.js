@@ -2,7 +2,6 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import Box from '@mui/material/Box';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 
 export default function RecipeForm({ droppedIngredients }) {
@@ -19,6 +18,7 @@ export default function RecipeForm({ droppedIngredients }) {
         minHeight: '200px',
         bgcolor: isOver ? 'rgba(0, 255, 0, 0.1)' : 'background.paper',
         borderRadius: 1,
+        position: 'relative',
       }}
     >
       <Typography variant="h5" component="div" gutterBottom>
@@ -29,12 +29,12 @@ export default function RecipeForm({ droppedIngredients }) {
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {droppedIngredients.map((ingredient, index) => (
-          <img
-            key={index}
-            src={ingredient.image}
-            alt={ingredient.name}
-            style={{ height: '200px', width: '200px', objectFit: 'contain' }}
-          />
+          <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+            <img src={ingredient.image} alt={ingredient.name} style={{ height: 56, width: 56, objectFit: 'contain' }} />
+            <Typography variant="body1" sx={{ ml: 2 }}>
+              {ingredient.name}
+            </Typography>
+          </Box>
         ))}
       </Box>
     </Box>

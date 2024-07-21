@@ -1,5 +1,6 @@
 'use client';
 
+// src/app/page.js
 import React, { useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import IngredientsList from '../components/IngredientsList';
@@ -7,41 +8,61 @@ import RecipeForm from '../components/RecipeForm';
 import DarkModeToggle from '../components/DarkModeToggle';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid'
+
+// Define ingredients here
+const ingredients = [
+  { id: 'lettuce', name: 'Lettuce', image: '/images/lettuce.png' },
+  { id: 'onion', name: 'Onion', image: '/images/onion.png' },
+  { id: 'beef', name: 'Beef', image: '/images/beef.png' },
+  { id: 'cheese', name: 'Cheese', image: '/images/cheese.png' },
+  { id: 'tomato', name: 'Tomato', image: '/images/tomato.png' },
+  { id: 'ketchup', name: 'Ketchup', image: '/images/ketchup.png' },
+];
+
+const MAX_ITEMS = 10;
 
 export default function Page() {
   const [droppedIngredients, setDroppedIngredients] = useState([]);
 
-  function handleDragEnd(event) {
-    const { over, active } = event;
-    if (over && over.id === 'recipe-form') {
-      setDroppedIngredients((prevIngredients) => [
-        ...prevIngredients,
-        { id: active.id, name: active.data.current.name, image: active.data.current.image },
-      ]);
+  const handleDrop = (event) => {
+    const droppedId = event.active.id; // Get the ID of the dropped item
+    const ingredient = ingredients.find(item => item.id === droppedId);
+  
+    if (ingredient && droppedIngredients.length < MAX_ITEMS && !droppedIngredients.some(item => item.id === droppedId)) {
+      setDroppedIngredients([...droppedIngredients, ingredient]);
     }
-  }
+  };
+
+  console.log('droppedIngredients', droppedIngredients);
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
-      <Box sx={{ p: 4, bgcolor: 'background.default', minHeight: '100vh' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-            Create Your Burger
-          </Typography>
+    <DndContext onDragEnd={handleDrop}>
+      <div className="container mx-auto p-4 bg-mcdLightGray dark:bg-mcdDarkBg min-h-screen">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold text-mcdRed dark:text-mcdYellow">Create Your Burger</h1>
           <DarkModeToggle />
-        </Box>
-        <Box sx={{ display: 'flex', gap: 4 }}>
-          <Grid container>
-            <Grid item xs={6}>
-            <IngredientsList />
-            </Grid>
-            <Grid item xs={6}>
+        </div>
+        <div className="flex space-x-4">
+          <IngredientsList />
+          <Box sx={{ flex: 1 }}>
             <RecipeForm droppedIngredients={droppedIngredients} />
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6">Preview</Typography>
+            <Box
+              sx={{
+                border: '1px solid gray',
+                borderRadius: 1,
+                p: 2,
+                minHeight: '400px',
+                bgcolor: 'background.paper',
+              }}
+            >
+              <RecipeForm droppedIngredients={droppedIngredients} />
+            </Box>
+          </Box>
+        </div>
+      </div>
     </DndContext>
   );
 }
